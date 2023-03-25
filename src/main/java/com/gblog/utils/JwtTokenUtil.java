@@ -19,14 +19,14 @@ import java.util.Date;
 @Data
 @Component
 @ConfigurationProperties(prefix = "gblog.jwt")
-public class JwtUtil {
+public class JwtTokenUtil {
 
 	private String secret;
 	private long expire;
 	private String header;
 
 	/**
-	 * 生成jwt token
+	 * 生成jwt
 	 * @param userId
 	 * @return
 	 */
@@ -45,7 +45,7 @@ public class JwtUtil {
 	}
 
 	/**
-	 * 获取jwt token
+	 * 获取jwt
 	 * @param token
 	 * @return
 	 */
