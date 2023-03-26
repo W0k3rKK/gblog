@@ -97,7 +97,7 @@ public class JwtFilter extends AuthenticatingFilter {
 		HttpServletResponse httpServletResponse = (HttpServletResponse) response;
 
 		Throwable throwable = e.getCause() == null ? e : e.getCause();
-		Result result = Result.fail(throwable.getMessage());
+		Result result = Result.unAuth(throwable.getMessage());
 		String json = JSONUtil.toJsonStr(result);
 
 		try {

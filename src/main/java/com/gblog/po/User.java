@@ -7,12 +7,11 @@ import lombok.Data;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import java.time.LocalDateTime;
 import java.io.Serializable;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author www.javacoder.top
@@ -22,26 +21,26 @@ import java.io.Serializable;
 @TableName("m_user")
 public class User implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
+	@TableId(value = "id", type = IdType.AUTO)
+	private Long id;
 
-    @NotBlank(message = "昵称不能为空")
-    private String username;
+	@NotBlank(message = "昵称不能为空")
+	private String username;
 
-    private String avatar;
+	private String avatar;
 
-    @Email(message = "邮箱格式不正确")
-    @NotBlank(message = "邮箱不能为空")
-    private String email;
+	@Email(message = "邮箱格式不正确")
+	@NotBlank(message = "邮箱不能为空")
+	private String email;
 
-    private String password;
+	private String password;
 
-    private Integer status;
+	private Integer status;
 
-    private LocalDateTime created;
+	private String created;
 
-    private LocalDateTime lastLogin;
+	private String lastLogin;
 
 }
