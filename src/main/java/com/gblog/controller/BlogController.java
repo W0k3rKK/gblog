@@ -8,8 +8,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.gblog.common.code.Result;
 import com.gblog.po.Blog;
 import com.gblog.service.BlogService;
-import com.gblog.utils.ShiroUtil;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
@@ -56,7 +54,7 @@ public class BlogController {
 	 * @param blog
 	 * @return
 	 */
-	@RequiresAuthentication
+//	@RequiresAuthentication
 	@PostMapping("/blog/edit")
 	public Result edit(@Validated @RequestBody Blog blog) {
 
@@ -66,13 +64,13 @@ public class BlogController {
 		if(blog.getId() != null) {
 			temp = blogService.getById(blog.getId());
 			// 只能编辑自己的文章
-			System.out.println(ShiroUtil.getProfile().getId());
-			Assert.isTrue(temp.getUserId().longValue() == ShiroUtil.getProfile().getId().longValue(), "没有权限编辑");
+//			System.out.println(ShiroUtil.getProfile().getId());
+//			Assert.isTrue(temp.getUserId().longValue() == ShiroUtil.getProfile().getId().longValue(), "没有权限编辑");
 
 		} else {
 
 			temp = new Blog();
-			temp.setUserId(ShiroUtil.getProfile().getId());
+//			temp.setUserId(ShiroUtil.getProfile().getId());
 			temp.setCreated(LocalDateTime.now());
 			temp.setStatus(0);
 		}

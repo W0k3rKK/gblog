@@ -72,18 +72,25 @@
             <version>5.8.12</version>
         </dependency>
 
+        <!-- 废弃shiro方案，使用spring security方案-->
         <!-- shiro-redis-->
-        <dependency>
-            <groupId>org.crazycake</groupId>
-            <artifactId>shiro-redis-spring-boot-starter</artifactId>
-            <version>3.3.1</version>
-        </dependency>
+        <!--<dependency>-->
+        <!--    <groupId>org.crazycake</groupId>-->
+        <!--    <artifactId>shiro-redis-spring-boot-starter</artifactId>-->
+        <!--    <version>3.3.1</version>-->
+        <!--</dependency>-->
 
         <!-- jwt-->
+        <!--<dependency>-->
+        <!--    <groupId>io.jsonwebtoken</groupId>-->
+        <!--    <artifactId>jjwt</artifactId>-->
+        <!--    <version>0.9.1</version>-->
+        <!--</dependency>-->
+
+        <!-- spring security-->
         <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt</artifactId>
-            <version>0.9.1</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
         <dependency>
