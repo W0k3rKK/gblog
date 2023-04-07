@@ -8,8 +8,6 @@ import com.gblog.common.code.Result;
 import com.gblog.common.dto.LoginDto;
 import com.gblog.po.User;
 import com.gblog.service.UserService;
-import com.gblog.utils.JwtTokenUtil;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -23,8 +21,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 @RestController
 public class AccountController {
-	@Autowired
-	private JwtTokenUtil jwtTokenUtil;
+//	@Autowired
+//	private JwtTokenUtil jwtTokenUtil;
 
 	@Autowired
 	private UserService userService;
@@ -46,7 +44,7 @@ public class AccountController {
 		if (!user.getPassword().equals(SecureUtil.md5(loginDto.getPassword()))) {
 			return Result.badGateway("密码错误！");
 		}
-		String jwt = jwtTokenUtil.generateToken(user.getId());
+		String jwt = "";
 		System.out.println("jwt = " + jwt);
 
 		response.setHeader("Authorization", jwt);
@@ -63,7 +61,7 @@ public class AccountController {
 	}
 
 	@GetMapping("/logout")
-	@RequiresAuthentication
+//	@RequiresAuthentication
 	public Result logout() {
 		return Result.succ(null);
 	}
