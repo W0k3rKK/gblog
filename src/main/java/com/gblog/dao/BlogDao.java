@@ -1,10 +1,8 @@
 package com.gblog.dao;
 
 
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.gblog.po.Blog;
-import lombok.Data;
 
 /**
  * <p>

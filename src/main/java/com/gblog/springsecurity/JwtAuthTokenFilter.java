@@ -1,20 +1,24 @@
 package com.gblog.springsecurity;
 
+import cn.hutool.json.JSONObject;
 import cn.hutool.jwt.JWTUtil;
 import com.gblog.common.MyConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
@@ -37,10 +41,34 @@ public class JwtAuthTokenFilter extends OncePerRequestFilter {
 	@Autowired
 	private UserDetailsService userDetailsService;
 
+	@Autowired
+	private JwtAuthProvider jwtAuthProvider;
+
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 //		获取请求头中的token: Authorization: Bearer <authToken>
-		String authHeader = request.getHeader(AUTH_HEADER);
+		StringBuilder sb = new StringBuilder();
+		BufferedReader reader = request.getReader();
+		String line;
+		while ((line = reader.readLine()) != null) {
+			sb.append(line);
+		}
+		String requestBody = sb.toString();
+		JSONObject jsonObject = new JSONObject(requestBody);
+		String username1 = jsonObject.getStr("username");
+		String password1 = jsonObject.getStr("password");
+		log.info("username1:{}, password1:{}", username1, password1);
+
+
+		String authHeader = jsonObject.getStr(AUTH_HEADER);
+
+		if (StringUtils.isEmpty(authHeader)) {
+			UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username1, password1);
+			Authentication authentication = jwtAuthProvider.authenticate(authenticationToken);
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+			filterChain.doFilter(request, response);
+			return;
+		}
 		if (Objects.isNull(authHeader) || !authHeader.startsWith(AUTH_HEADER_TYPE)) {
 			filterChain.doFilter(request, response);
 			return;

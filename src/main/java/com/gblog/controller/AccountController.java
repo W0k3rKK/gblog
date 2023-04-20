@@ -37,6 +37,7 @@ public class AccountController {
 	 */
 	@CrossOrigin
 	@PostMapping("/login")
+	@ResponseBody
 	public Result login(@Validated @RequestBody LoginDto loginDto, HttpServletResponse response) {
 		User user = userService.getOne(new QueryWrapper<User>().eq("username", loginDto.getUsername()));
 		Assert.notNull(user, "用户不存在");
@@ -63,6 +64,9 @@ public class AccountController {
 	@GetMapping("/logout")
 //	@RequiresAuthentication
 	public Result logout() {
+//		spring security logout
+
+
 		return Result.succ(null);
 	}
 }

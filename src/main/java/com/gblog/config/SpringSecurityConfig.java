@@ -1,8 +1,8 @@
 package com.gblog.config;
 
+import com.gblog.springsecurity.AcsDeniedHandler;
 import com.gblog.springsecurity.JwtAuthProvider;
 import com.gblog.springsecurity.JwtAuthTokenFilter;
-import com.gblog.springsecurity.AcsDeniedHandler;
 import com.gblog.springsecurity.UnauthorizedHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -12,8 +12,11 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -32,6 +35,15 @@ public class SpringSecurityConfig {
 
 	@Autowired
 	private AcsDeniedHandler acsDeniedHandler;
+
+
+	@Bean
+	public UserDetailsService userDetailsService() {
+		InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
+		manager.createUser(User.withUsername("user").password("password").roles("USER").build());
+		return manager;
+	}
+
 
 	/**
 	 * 配置AuthenticationManager，否则无法自动装配
@@ -98,7 +110,7 @@ public class SpringSecurityConfig {
 				.and()
 				.authorizeRequests()
 //				登录注册不需要认证
-				.antMatchers("/user/login", "/user/register").permitAll()
+				.antMatchers("/login", "/register").permitAll()
 //				其他请求全部需要认证
 				.anyRequest()
 				.authenticated();
