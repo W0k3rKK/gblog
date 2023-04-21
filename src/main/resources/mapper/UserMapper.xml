@@ -9,9 +9,9 @@
         <result column="avatar" property="avatar" />
         <result column="email" property="email" />
         <result column="password" property="password" />
-        <result column="status" property="status" />
         <result column="created" property="created" />
         <result column="last_login" property="lastLogin" />
+        <result column="enabled" property="enabled" />
     </resultMap>
 
 </mapper>

@@ -3,13 +3,13 @@ package com.gblog.springsecurity;
 import cn.hutool.json.JSONObject;
 import cn.hutool.jwt.JWTUtil;
 import com.gblog.common.MyConstant;
+import com.gblog.service.impl.CustomUserDetailService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -39,7 +39,7 @@ public class JwtAuthTokenFilter extends OncePerRequestFilter {
 	private final static String AUTH_HEADER_TYPE = "Bearer";
 
 	@Autowired
-	private UserDetailsService userDetailsService;
+	private CustomUserDetailService userDetailsService;
 
 	@Autowired
 	private JwtAuthProvider jwtAuthProvider;
@@ -55,15 +55,15 @@ public class JwtAuthTokenFilter extends OncePerRequestFilter {
 		}
 		String requestBody = sb.toString();
 		JSONObject jsonObject = new JSONObject(requestBody);
-		String username1 = jsonObject.getStr("username");
-		String password1 = jsonObject.getStr("password");
-		log.info("username1:{}, password1:{}", username1, password1);
+		String username = jsonObject.getStr("username");
+		String password = jsonObject.getStr("password");
+		log.info("username:{}, password:{}", username, password);
 
 
 		String authHeader = jsonObject.getStr(AUTH_HEADER);
 
 		if (StringUtils.isEmpty(authHeader)) {
-			UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username1, password1);
+			UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
 			Authentication authentication = jwtAuthProvider.authenticate(authenticationToken);
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 			filterChain.doFilter(request, response);
@@ -86,7 +86,7 @@ public class JwtAuthTokenFilter extends OncePerRequestFilter {
 		}
 
 //		校验成功，获取用户名
-		String username = (String) JWTUtil.parseToken(authToken).getPayload("username");
+		username = (String) JWTUtil.parseToken(authToken).getPayload("username");
 		log.info("doFilterInternal(),username:{}", username);
 //		根据用户名获取用户信息
 		UserDetails userDetails = userDetailsService.loadUserByUsername(username);

@@ -37,10 +37,11 @@ public class User implements Serializable {
 
 	private String password;
 
-	private Integer status;
-
 	private String created;
 
 	private String lastLogin;
+
+	@NotBlank(message = "可用性不能为空")
+	private int enabled;
 
 }
