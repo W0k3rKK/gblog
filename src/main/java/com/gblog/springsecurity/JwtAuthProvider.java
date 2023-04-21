@@ -1,5 +1,6 @@
 package com.gblog.springsecurity;
 
+import com.gblog.service.impl.CustomUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -7,7 +8,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +24,7 @@ public class JwtAuthProvider implements AuthenticationProvider {
 	private PasswordEncoder passwordEncoder;
 
 	@Autowired
-	private UserDetailsService userDetailsService;
+	private CustomUserDetailService userDetailsService;
 
 
 	@Override
@@ -37,7 +37,7 @@ public class JwtAuthProvider implements AuthenticationProvider {
 			return new UsernamePasswordAuthenticationToken(userName, password, userDetails.getAuthorities());
 		}
 
-		throw new BadCredentialsException("Error!!! Bad Credentials");
+		throw new BadCredentialsException("错误!!! Bad Credentials");
 	}
 
 

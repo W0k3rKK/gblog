@@ -22,6 +22,7 @@ shiro-redis:
 logging:
   level:
     com.gblog: debug
+    org.springframework.security: debug
 
 
 

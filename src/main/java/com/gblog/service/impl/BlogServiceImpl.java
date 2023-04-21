@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
  * @since 2023-03-23
  */
 @Service
-public class BlogServiceImpl extends ServiceImpl<BlogDao, Blog> implements BlogService {
+public class BlogServiceImpl extends ServiceImpl<BlogDao, Blog>
+        implements BlogService {
 
 }
