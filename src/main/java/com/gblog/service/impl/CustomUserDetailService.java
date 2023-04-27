@@ -1,20 +1,23 @@
 package com.gblog.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.gblog.dao.AuthoritiesDao;
-import com.gblog.dao.UserDao;
-import com.gblog.po.Authorities;
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.gblog.common.dto.CustomUserDetailsUser;
 import com.gblog.po.User;
+import com.gblog.service.AuthoritiesService;
+import com.gblog.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author: W0k3rKK
@@ -26,52 +29,42 @@ import java.util.Collection;
 public class CustomUserDetailService implements UserDetailsService {
 
     @Autowired
-    private UserDao userDao;
+    private UserService userService;
 
     @Autowired
-    private AuthoritiesDao authoritiesDao;
+    private AuthoritiesService authoritiesService;
 
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        User user = userService.getOne(Wrappers.<User>query().lambda().eq(User::getUsername, username));
 
-        QueryWrapper<User> userQW = new QueryWrapper<>();
-        userQW.eq("username", username);
-        User user = userDao.selectOne(userQW);
-        if (user == null) {
-            throw new UsernameNotFoundException("找不到该用户: " + username);
+        if (ObjectUtil.isNull(user)) {
+            throw new UsernameNotFoundException("用户不存在");
         }
-
-        QueryWrapper<Authorities> authQW = new QueryWrapper<>();
-        authQW.eq("username", username);
-        Authorities auth = authoritiesDao.selectOne(authQW);
-
-        if (auth == null) {
-            log.info("找不到该用户的权限: " + username+"，使用默认权限");
-            auth = new Authorities();
-            auth.setUsername(username);
-            auth.setAuthority("ROLE_USER");
-            authoritiesDao.insert(auth);
-            log.info("已为该用户添加默认权限: " + username);
-            authorities.add(new GrantedAuthority() {
-                @Override
-                public String getAuthority() {
-                    return "ROLE_USER";
-                }
-            });
-        }else {
-            log.info("已找到该用户的权限: " + username);
-            Authorities finalAuth = auth;
-            authorities.add(new GrantedAuthority() {
-                @Override
-                public String getAuthority() {
-                    return finalAuth.getAuthority();
-                }
-            });
-        }
-
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
+        return getDetail(user);
     }
+
+    public UserDetails loadUserByUserId(Long userId) throws UsernameNotFoundException {
+        User user = userService.getById(userId);
+        if (ObjectUtil.isNull(user)) {
+            throw new UsernameNotFoundException("用户不存在");
+        }
+        return getDetail(user);
+    }
+
+    private UserDetails getDetail(User user) {
+
+        Set<String> permissions = authoritiesService.getAuthorityByName(user.getUsername());
+
+        List<GrantedAuthority> authorities = AuthorityUtils.commaSeparatedStringToAuthorityList(CollUtil.join(permissions, ","));
+
+        CustomUserDetailsUser customUserDetailsUser = new CustomUserDetailsUser(user.getId(),
+                user.getUsername(), user.getPassword(), authorities);
+
+        return customUserDetailsUser;
+    }
+
+
 }
